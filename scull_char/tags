@@ -1,0 +1,37 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.6	//
+CC	app/Makefile	/^CC=arm-linux-gcc$/;"	m
+CNT	demo1.c	13;"	d	file:
+DEVNAME	demo1.c	11;"	d	file:
+KERNEL_DIR	Makefile	/^KERNEL_DIR := ~\/linux-3.5$/;"	m
+OFF	app/ledapp.c	/^	OFF, ON, STAT$/;"	e	enum:__anon1	file:
+ON	app/ledapp.c	/^	OFF, ON, STAT$/;"	e	enum:__anon1	file:
+STAT	app/ledapp.c	/^	OFF, ON, STAT$/;"	e	enum:__anon1	file:
+SZ	app/read.c	14;"	d	file:
+SZ	app/write.c	14;"	d	file:
+cdev	demo1.c	/^	struct cdev cdev;$/;"	m	struct:scull_t	typeref:struct:scull_t::cdev	file:
+class	demo1.c	/^static struct class *class;$/;"	v	typeref:struct:class	file:
+demo_exit	demo1.c	/^module_exit(demo_exit);$/;"	v
+demo_exit	demo1.c	/^static void demo_exit(void)$/;"	f	file:
+demo_init	demo1.c	/^module_init(demo_init);$/;"	v
+demo_init	demo1.c	/^static int demo_init(void)$/;"	f	file:
+demo_open	demo1.c	/^static int demo_open (struct inode *inodp, struct file *filp)$/;"	f	file:
+demo_read	demo1.c	/^ssize_t demo_read (struct file *filp, char __user *buf, size_t cnt, loff_t *fpos)$/;"	f
+demo_release	demo1.c	/^static int demo_release (struct inode *inodp, struct file *filp)$/;"	f	file:
+demo_write	demo1.c	/^ssize_t demo_write (struct file *filp, const char __user *buf, size_t cnt, loff_t *fpos)$/;"	f
+devnum	demo1.c	/^static dev_t devnum = 0;$/;"	v	file:
+fops	demo1.c	/^const struct file_operations fops = {$/;"	v	typeref:struct:file_operations
+kbuf	demo1.c	/^	char *kbuf;$/;"	m	struct:scull_t	file:
+ledctl	app/ledapp.c	/^ssize_t ledctl(int cmd, int num, char *buf)$/;"	f
+length	demo1.c	/^	size_t length;$/;"	m	struct:scull_t	file:
+main	app/ledapp.c	/^int main(int argc, char *argv[])$/;"	f
+main	app/read.c	/^int main(int argc, char *argv[])$/;"	f
+main	app/write.c	/^int main(int argc, char *argv[])$/;"	f
+major	demo1.c	/^static int major = 0;$/;"	v	file:
+obj-m	Makefile	/^obj-m	:= demo1.o$/;"	m
+scull_t	demo1.c	/^static struct scull_t {$/;"	s	file:
+sculldev	demo1.c	/^}sculldev[CNT];$/;"	v	typeref:struct:scull_t	file:
