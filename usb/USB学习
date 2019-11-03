@@ -1,0 +1,106 @@
+接上USB
+[  171.855551] usb 2-1.2: new high-speed USB device number 117 using exynos-ehci
+[  172.152073] usb 2-1.2: New USB device found, idVendor=0951, idProduct=1666
+[  172.152222] usb 2-1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[  172.152360] usb 2-1.2: Product: DataTraveler 3.0
+[  172.152462] usb 2-1.2: Manufacturer: Kingston
+[  172.152911] usb 2-1.2: SerialNumber: 60A44C413AC0BEC0D991000D
+[  172.161337] usb-storage 2-1.2:1.0: USB Mass Storage device detected
+[  172.165670] scsi host3: usb-storage 2-1.2:1.0
+[  173.167859] scsi 3:0:0:0: Direct-Access     Kingston DataTraveler 3.0 PMAP PQ: 0 ANSI: 6
+[  173.174276] sd 3:0:0:0: Attached scsi generic sg0 type 0
+[  173.408569] sd 3:0:0:0: [sda] 60489728 512-byte logical blocks: (30.9 GB/28.8 GiB)
+[  173.410807] sd 3:0:0:0: [sda] Write Protect is off
+[  173.413053] sd 3:0:0:0: [sda] No Caching mode page found
+[  173.413151] sd 3:0:0:0: [sda] Assuming drive cache: write through
+[  173.423457]  sda: sda1
+[  173.432054] sd 3:0:0:0: [sda] Attached SCSI removable disk
+
+拔掉USB
+	 usb 2-1.2: USB disconnect, device number 116
+
+
+/* USB_DT_DEVICE: Device descriptor */
+struct usb_device_descriptor {
+	__u8  bLength;
+	__u8  bDescriptorType;
+
+	__le16 bcdUSB;					//USB版本号
+	__u8  bDeviceClass;				//
+	__u8  bDeviceSubClass;
+	__u8  bDeviceProtocol;
+	__u8  bMaxPacketSize0;
+	__le16 idVendor;				//厂家ID
+	__le16 idProduct;				//产品ID
+	__le16 bcdDevice;
+	__u8  iManufacturer;
+	__u8  iProduct;					
+	__u8  iSerialNumber;
+	__u8  bNumConfigurations;		//配置个数
+} __attribute__ ((packed));	 
+
+//配置描述符
+struct usb_config_descriptor {
+	__u8  bLength;
+	__u8  bDescriptorType;
+
+	__le16 wTotalLength;
+	__u8  bNumInterfaces;			//接口个数
+	__u8  bConfigurationValue;
+	__u8  iConfiguration;
+	__u8  bmAttributes;
+	__u8  bMaxPower;
+} __attribute__ ((packed));
+
+//接口描述符
+/* USB_DT_INTERFACE: Interface descriptor */
+struct usb_interface_descriptor {
+	__u8  bLength;
+	__u8  bDescriptorType;
+
+	__u8  bInterfaceNumber;
+	__u8  bAlternateSetting;
+	__u8  bNumEndpoints;			//USB端点描述符  /*USB的传输对象是端点*/
+	__u8  bInterfaceClass;
+	__u8  bInterfaceSubClass;
+	__u8  bInterfaceProtocol;
+	__u8  iInterface;
+} __attribute__ ((packed));
+
+/* USB_DT_ENDPOINT: Endpoint descriptor */
+struct usb_endpoint_descriptor {
+	__u8  bLength;
+	__u8  bDescriptorType;
+
+	__u8  bEndpointAddress;
+	__u8  bmAttributes;				//端点属性
+	__le16 wMaxPacketSize;			//最大包大小
+	__u8  bInterval;				//查询频率
+
+	/* NOTE:  these two are _only_ in audio endpoints. */
+	/* use USB_DT_ENDPOINT*_SIZE in bLength, not sizeof. */
+	__u8  bRefresh;
+	__u8  bSynchAddress;
+} __attribute__ ((packed));
+
+每一个硬件都有一个设备描述符，一个设备下面可能有多个配置，一个配置里面可能有多个接口，接口就是逻辑上的设备；写驱动程序时，一个USB硬件可能会安装多个USB驱动程序，因为它可能有多个接口。一个接口描述符里边可能有多个端点描述符，端点描述符里边可能会说一次可以传输多大的数据，传输类型。
+
+搜索：
+	hub_probe(struct usb_interface *intf, const struct usb_device_id *id)
+	 hub_event(struct work_struct *work)
+		hub_port_connect_change(struct usb_hub *hub, int port1,u16 portstatus, u16 portchange)
+			hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,u16 portchange)
+			
+				udev = usb_alloc_dev(hdev, hdev->bus, port1);//这里对USB总线的device端进行注册
+				
+				hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,	int retry_counter)
+					为什么会获得8个字节呢？读8个字节，刚好可以读到bMaxPacketSize0，从这里可以知道一个端点一次可以传输最大有多少。
+					retval = usb_get_device_descriptor(udev, 8);         +4473
+					retval = usb_get_device_descriptor(udev, USB_DT_DEVICE_SIZE); +4525 //再次获得设备描述符
+				usb_new_device(udev);	//把所有的描述符都读出来，并解析。
+					usb_enumerate_device(udev);	/* Read descriptors */
+						usb_get_configuration(udev);
+							//分配内存，获得描述符信息
+							length = max((int) le16_to_cpu(desc->wTotalLength),    和配置描述符中的对应
+					device_add(&udev->dev);	//把设备放入 usb_bus_type总线的device列表，从usb_bus_type总线的driver链表中取出usb_driver,通过usb_device_match一一比较，如果能匹配，调用driver的probe函数
+					

@@ -1,0 +1,26 @@
+目的：
+	USB鼠标用作按键
+		左 ==》 l
+		右 ==》 s
+		中间=》 Enter
+		
+		1、分配input_dev
+		2、设置
+		3、注册
+		4、硬件操作
+		
+#define USB_INTERFACE_INFO(cl, sc, pr) \
+	.match_flags = USB_DEVICE_ID_MATCH_INT_INFO, \
+	.bInterfaceClass = (cl), \
+	.bInterfaceSubClass = (sc), \
+	.bInterfaceProtocol = (pr)
+如果想要单独注册支持某厂家的一款设备，可以直接使用USB_DEVICE(vend, prod)
+linux-4.4/drivers/hid/usbhid/usbmouse.c 
+
+怎么写USB设备驱动程序？
+1、分配/设置usb_driver结构体
+
+
+
+实验：
+	1 去掉原来的鼠标驱动程序
